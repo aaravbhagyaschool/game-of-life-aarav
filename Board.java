@@ -7,7 +7,7 @@ interface Board {
     public void step();
 
     // Provide the number of neighbors a cell has
-    public int countNeighbors(int x, int y);
+    public int upordown(int x, int y);
 
     // Get the state of the requested cell
     public int get(int x, int y);
