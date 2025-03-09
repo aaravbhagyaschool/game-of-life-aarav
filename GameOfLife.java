@@ -5,104 +5,146 @@ public class GameOfLife implements Board {
     // Integers: 0 or 1 for alive or dead
     private int[][] board;
 
-    public GameOfLife(int x, int y) {
-        R = x;
-        C = y;
-        int [][] board = new int[R][C];
+    public GameOfLife(int x, int y)
+    {
+        // Construct a 2d array of the given x and y size.
+        board = new int[x][y];
+        for (int i = 0; i < x; i++)
+        {
+            for (int j = 0; j < y; j++)
+            {
+                board[i][j] = 0;
+            }
+        }
     }
 
     // Set values on the board
-    public void set(int x, int y, int[][] data) {
-        for (int i = 0; i < data.length; i++) {
-            for (int j = 0; j < data[0].length; j++) {
-            // board[i + x][j + y] = data[i][j];
-                board[(i + x) % R][(j + y) % C] = data[i][j];
+    public void set(int x, int y, int[][] data) 
+    {
+        for (int i = 0; i < data.length; i++) 
+        {
+            for (int j = 0; j < data[0].length; j++) 
+            {
+                if ((i + x) < board.length) 
+                {
+                    if ((j + y) < board[0].length) 
+                    {
+                        board[i + x][j + y] = data[i][j];
+                    }
+                }
             }
         }
     }
 
     // Run the simulation for a number of turns
-    public void run(int turns) {
-        int i = 0;
-        while (i < turns)
+    public void run(int turns) 
+    {
+        int count = 0;
+        while (count < turns) 
         {
             step();
-            i++;
+            count++;
+            if (count >= turns)
+            {
+                break; 
+            }
         }
     }
 
     // Step the simulation forward one turn.
-    public void step() {
-        int[][] aaravboard = new int[R][C];
-        for (int x = 0; x < R; x++) 
+    public void step()
+    {
+        print();
+        int[][] nextBoard = new int[board.length][board[0].length];
+        for (int x = 0; x < board.length; x++) 
         {
-            for (int y = 0; y < C; y++) 
+            for (int y = 0; y < board[0].length; y++) 
             {
-                int upordown = upordown(x, y);
+                int neighbors = countNeighbors(x, y);
+                
                 if (board[x][y] == 1) 
                 {
-                    if (upordown == 2 || upordown == 3) 
+                    if (neighbors == 2) 
                     {
-                        aaravboard[x][y] = 1; 
-                    } 
-                    else 
+                        nextBoard[x][y] = 1;
+                    }
+                    else if (neighbors == 3)
                     {
-                        aaravboard[x][y] = 0; 
+                        nextBoard[x][y] = 1;
+                    }
+                    else
+                    {
+                        nextBoard[x][y] = 0;
                     }
                 } 
                 else 
                 {
-                    if (upordown == 3) 
+                    if (neighbors == 3) 
                     {
-                        aaravboard[x][y] = 1;
-                    } 
-                    else 
+                        nextBoard[x][y] = 1;
+                    }
+                    else
                     {
-                        aaravboard[x][y] = 0; 
+                        nextBoard[x][y] = 0;
                     }
                 }
             }
         }
+        board = nextBoard;
+    }
 
-
-    public int upordown(int x, int y) {
-        int count = 0;
-        int z = 0;
-        int[] A = {-1, -1, -1, 0, 0, 1, 1, 1};
-        int[] B = {-1, 0, 1, -1, 1, -1, 0, 1};
-        z++;
-        for (int i = 0; i < (7 + z); i++) 
+    public int countNeighbors(int x, int y) 
+    {
+        int count2 = 0;
+        for (int i = -1; i <= 1; i++) 
         {
-            int a = x + A[i];
-            int b = y + B[i];
-            count = (count + get(a, b)); 
+            for (int j = -1; j <= 1; j++) 
+            {
+                if (!(i == 0 && j == 0)) 
+                {
+                    if (get(x + i, y + j) == 1) //note Aarav  get()
+                    {
+                        count2 = count2 + 1;
+                    }
+                }
+            }
         }
-        return count;
+        return count2;
     }
 
     // Get a value from the board with "wrap around"
     // Locations outside the board will loop back into the board.
     // Ex: -1 will read board.length-1
-    public int get(int x, int y) {
-        return (board[(x + R) % R][(y + C) % C]);
+    public int get(int x, int y) 
+    {
+        int xmax = board.length; //rows
+        int ymax = board[0].length; //collumns
+        int xwrap = (x + xmax) % xmax; //looped
+        int ywrap = (y + ymax) % ymax; //also looped
+        
+        return board[xwrap][ywrap];
     }
 
-    // Get the whole board state
-    public int[][] get() {
+    // Test helper to get the whole board state
+    public int[][] get()
+    {
         return board;
     }
 
     // Test helper to print the current state
-    public void print(){
+    public void print()
+    {
         // Print the header
         System.out.print("\n ");
-        for (int y = 0; y < board[0].length; y++) {
-            System.out.print(y%10 + " ");
-        }
 
-        for (int x = 0; x < board.length; x++) {
-            System.out.print("\n" + x%10);
-            for (int y=0; y<board[x].length; y++)
+        for (int y = 0; y < board[0].length; y++) 
+        {
+            System.out.print(y % 10 + " ");
+        }
+        for (int x = 0; x < board.length; x++) 
+        {
+            System.out.print("\n" + x % 10);
+            for (int y = 0; y < board[x].length; y++)
             {
                 if (board[x][y] == 1)
                 {
@@ -114,6 +156,7 @@ public class GameOfLife implements Board {
                 }
             }
         }
+
         System.out.println();
     }
 }
