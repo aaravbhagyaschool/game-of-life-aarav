@@ -102,7 +102,7 @@ public class GameOfLife implements Board {
             {
                 if (!(i == 0 && j == 0)) 
                 {
-                    if (get(x + i, y + j) == 1) //note Aarav  get()
+                    if (get(x + i, y + j) == 1) //note Aarav get()
                     {
                         count2 = count2 + 1;
                     }
